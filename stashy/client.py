@@ -11,8 +11,8 @@ from .compat import basestring
 class Stash(object):
     _url = "/"
 
-    def __init__(self, base_url, username=None, password=None, verify=True, session=None):
-        self._client = StashClient(base_url, username, password, verify, session=session)
+    def __init__(self, base_url, username=None, password=None, verify=True, session=None, cert=None):
+        self._client = StashClient(base_url, username, password, verify, session=session, cert=None)
 
     admin = Nested(Admin)
     projects = Nested(Projects)
@@ -42,7 +42,7 @@ class StashClient(object):
     branches_api_version = '1.0'
     branches_api_path = '{0}/{1}'.format(branches_api_name, branches_api_version)
 
-    def __init__(self, base_url, username=None, password=None, verify=True, session=None):
+    def __init__(self, base_url, username=None, password=None, verify=True, session=None, cert=None):
         assert isinstance(base_url, basestring)
 
         if base_url.endswith("/"):
@@ -57,6 +57,9 @@ class StashClient(object):
 
         self._session = session
         self._session.verify = verify
+
+        if cert:
+            self._session.cert=cert
 
         if username is not None or password is not None:
             self._session.auth = (username, password)
